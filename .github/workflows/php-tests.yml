@@ -17,7 +17,7 @@ jobs:
           extensions: mbstring, intl
 
       - name: Install dependencies
-        run: composer install --prefer-dist --no-suggest --no-progress
+        run: composer update
 
       - name: Run PHPUnit
         run: vendor/bin/phpunit
