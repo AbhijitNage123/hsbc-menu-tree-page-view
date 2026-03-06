@@ -33,8 +33,8 @@ class HSBC_Menu {
 	 * sub-menus already exist when we try to attach our panel to them.
 	 */
 	public function __construct() {
-		add_action( 'admin_menu', [ $this, 'register_menu' ], 999 );
-		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_assets' ] );
+		add_action( 'admin_menu', array( $this, 'register_menu' ), 999 );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 	}
 
 	// -------------------------------------------------------------------------
@@ -52,7 +52,7 @@ class HSBC_Menu {
 	 * @return bool True if the current user should see the tree.
 	 */
 	private function can_view() {
-		$roles = get_option( 'hsbc_mtpv_roles', [] );
+		$roles = get_option( 'hsbc_mtpv_roles', array() );
 
 		if ( empty( $roles ) ) {
 			return current_user_can( 'edit_pages' );
@@ -86,7 +86,7 @@ class HSBC_Menu {
 			return;
 		}
 
-		$post_types = get_option( 'hsbc_mtpv_post_types', [ 'page' ] );
+		$post_types = get_option( 'hsbc_mtpv_post_types', array( 'page' ) );
 
 		/*
 		 * WordPress automatically opens an <a href="..."> for every submenu item.
@@ -112,7 +112,7 @@ class HSBC_Menu {
 				$menu_title,
 				'edit_pages',
 				'hsbc-mtpv-panel-' . $post_type,
-				[ $this, 'render_settings_redirect' ]
+				array( $this, 'render_settings_redirect' )
 			);
 		}
 	}
@@ -153,14 +153,14 @@ class HSBC_Menu {
 		wp_enqueue_style(
 			'hsbc-mtpv',
 			HSBC_MTPV_URL . 'assets/css/tree.css',
-			[],
+			array(),
 			HSBC_MTPV_VERSION
 		);
 
 		wp_register_script(
 			'sortablejs',
 			HSBC_MTPV_URL . 'assets/js/vendor/Sortable.min.js',
-			[],
+			array(),
 			'1.15.3',
 			true
 		);
@@ -168,45 +168,49 @@ class HSBC_Menu {
 		wp_enqueue_script(
 			'hsbc-mtpv',
 			HSBC_MTPV_URL . 'assets/js/tree.js',
-			[ 'sortablejs' ],
+			array( 'sortablejs' ),
 			HSBC_MTPV_VERSION,
 			true
 		);
 
 		// Ancestors of the page currently being edited, so the tree auto-expands to it.
 		$current_post_id = isset( $_GET['post'] ) ? absint( $_GET['post'] ) : 0;
-		$ancestors       = $current_post_id ? array_map( 'intval', get_post_ancestors( $current_post_id ) ) : [];
+		$ancestors       = $current_post_id ? array_map( 'intval', get_post_ancestors( $current_post_id ) ) : array();
 
-		wp_localize_script( 'hsbc-mtpv', 'AdminHSBCMTPV', [
-			'ajaxUrl'       => admin_url( 'admin-ajax.php' ),
-			'nonce'         => wp_create_nonce( 'hsbc-mtpv' ),
-			'enableTrash'   => (bool) get_option( 'hsbc_mtpv_enable_trash', false ),
-			'currentPostId' => $current_post_id,
-			'ancestors'     => $ancestors,
-			'i18n'          => [
-				'edit'         => __( 'Edit', 'hsbc-menu-tree-page-view' ),
-				'view'         => __( 'View', 'hsbc-menu-tree-page-view' ),
-				'trash'        => __( 'Trash', 'hsbc-menu-tree-page-view' ),
-				'expand'       => __( 'Expand', 'hsbc-menu-tree-page-view' ),
-				'collapse'     => __( 'Collapse', 'hsbc-menu-tree-page-view' ),
-				'confirmTrash' => __( 'Move this page to trash?', 'hsbc-menu-tree-page-view' ),
-				'loading'      => __( 'Loading...', 'hsbc-menu-tree-page-view' ),
-				'noResults'    => __( 'No pages found', 'hsbc-menu-tree-page-view' ),
-				'noTitle'      => __( '(no title)', 'hsbc-menu-tree-page-view' ),
-				'addPage'      => __( 'Add new page', 'hsbc-menu-tree-page-view' ),
-				'addAfter'    => __( 'Add page after:', 'hsbc-menu-tree-page-view' ),
-				'addInside'    => __( 'Add page inside:', 'hsbc-menu-tree-page-view' ),
-				'after'       => __( 'After', 'hsbc-menu-tree-page-view' ),
-				'inside'       => __( 'Inside', 'hsbc-menu-tree-page-view' ),
-				'add'          => __( 'Add', 'hsbc-menu-tree-page-view' ),
-				'adding'       => __( 'Adding...', 'hsbc-menu-tree-page-view' ),
-				'cancel'       => __( 'Cancel', 'hsbc-menu-tree-page-view' ),
-				'pageTitlePh'  => __( 'Page title...', 'hsbc-menu-tree-page-view' ),
-				'draft'        => __( 'Draft', 'hsbc-menu-tree-page-view' ),
-				'pending'      => __( 'Pending', 'hsbc-menu-tree-page-view' ),
-				'publish'      => __( 'Published', 'hsbc-menu-tree-page-view' ),
-			],
-		] );
+		wp_localize_script(
+			'hsbc-mtpv',
+			'AdminHSBCMTPV',
+			array(
+				'ajaxUrl'       => admin_url( 'admin-ajax.php' ),
+				'nonce'         => wp_create_nonce( 'hsbc-mtpv' ),
+				'enableTrash'   => (bool) get_option( 'hsbc_mtpv_enable_trash', false ),
+				'currentPostId' => $current_post_id,
+				'ancestors'     => $ancestors,
+				'i18n'          => array(
+					'edit'         => __( 'Edit', 'hsbc-menu-tree-page-view' ),
+					'view'         => __( 'View', 'hsbc-menu-tree-page-view' ),
+					'trash'        => __( 'Trash', 'hsbc-menu-tree-page-view' ),
+					'expand'       => __( 'Expand', 'hsbc-menu-tree-page-view' ),
+					'collapse'     => __( 'Collapse', 'hsbc-menu-tree-page-view' ),
+					'confirmTrash' => __( 'Move this page to trash?', 'hsbc-menu-tree-page-view' ),
+					'loading'      => __( 'Loading...', 'hsbc-menu-tree-page-view' ),
+					'noResults'    => __( 'No pages found', 'hsbc-menu-tree-page-view' ),
+					'noTitle'      => __( '(no title)', 'hsbc-menu-tree-page-view' ),
+					'addPage'      => __( 'Add new page', 'hsbc-menu-tree-page-view' ),
+					'addAfter'     => __( 'Add page after:', 'hsbc-menu-tree-page-view' ),
+					'addInside'    => __( 'Add page inside:', 'hsbc-menu-tree-page-view' ),
+					'after'        => __( 'After', 'hsbc-menu-tree-page-view' ),
+					'inside'       => __( 'Inside', 'hsbc-menu-tree-page-view' ),
+					'add'          => __( 'Add', 'hsbc-menu-tree-page-view' ),
+					'adding'       => __( 'Adding...', 'hsbc-menu-tree-page-view' ),
+					'cancel'       => __( 'Cancel', 'hsbc-menu-tree-page-view' ),
+					'pageTitlePh'  => __( 'Page title...', 'hsbc-menu-tree-page-view' ),
+					'draft'        => __( 'Draft', 'hsbc-menu-tree-page-view' ),
+					'pending'      => __( 'Pending', 'hsbc-menu-tree-page-view' ),
+					'publish'      => __( 'Published', 'hsbc-menu-tree-page-view' ),
+				),
+			)
+		);
 	}
 
 	// -------------------------------------------------------------------------
@@ -225,16 +229,18 @@ class HSBC_Menu {
 	 */
 	private function render_root_tree( string $post_type ) {
 		$enable_trash = (bool) get_option( 'hsbc_mtpv_enable_trash', false );
-		$parent_ids   = $this->get_parent_ids( [ $post_type ] );
+		$parent_ids   = $this->get_parent_ids( array( $post_type ) );
 
-		$pages = get_posts( [
-			'post_type'      => $post_type,
-			'post_parent'    => 0,
-			'posts_per_page' => -1,
-			'orderby'        => 'menu_order',
-			'order'          => 'ASC',
-			'post_status'    => 'any',
-		] );
+		$pages = get_posts(
+			array(
+				'post_type'      => $post_type,
+				'post_parent'    => 0,
+				'posts_per_page' => -1,
+				'orderby'        => 'menu_order',
+				'order'          => 'ASC',
+				'post_status'    => 'any',
+			)
+		);
 
 		$pt_obj   = get_post_type_object( $post_type );
 		$pt_label = $pt_obj ? $pt_obj->labels->name : ucfirst( $post_type );
@@ -307,7 +313,7 @@ class HSBC_Menu {
 		$current_post_id = isset( $_GET['post'] ) ? absint( $_GET['post'] ) : 0;
 		$is_current      = $current_post_id === $page->ID;
 
-		$classes = [ 'hsbc-mtpv-item' ];
+		$classes = array( 'hsbc-mtpv-item' );
 		if ( $has_children ) {
 			$classes[] = 'hsbc-mtpv-has-children';
 		}
@@ -436,7 +442,7 @@ class HSBC_Menu {
 		global $wpdb;
 
 		if ( empty( $post_types ) ) {
-			return [];
+			return array();
 		}
 
 		$placeholders = implode( ',', array_fill( 0, count( $post_types ), '%s' ) );

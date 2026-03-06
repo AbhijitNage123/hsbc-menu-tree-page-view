@@ -34,10 +34,10 @@ class HSBC_MTPV_Ajax {
 	 * tree is only ever shown to logged-in users inside the hsbc area.
 	 */
 	public function __construct() {
-		add_action( 'wp_ajax_hsbc_mtpv_get_children', [ $this, 'get_children' ] );
-		add_action( 'wp_ajax_hsbc_mtpv_move_page',    [ $this, 'move_page' ] );
-		add_action( 'wp_ajax_hsbc_mtpv_trash_page',   [ $this, 'trash_page' ] );
-		add_action( 'wp_ajax_hsbc_mtpv_add_page',     [ $this, 'add_page' ] );
+		add_action( 'wp_ajax_hsbc_mtpv_get_children', array( $this, 'get_children' ) );
+		add_action( 'wp_ajax_hsbc_mtpv_move_page', array( $this, 'move_page' ) );
+		add_action( 'wp_ajax_hsbc_mtpv_trash_page', array( $this, 'trash_page' ) );
+		add_action( 'wp_ajax_hsbc_mtpv_add_page', array( $this, 'add_page' ) );
 	}
 
 	// -------------------------------------------------------------------------
@@ -58,7 +58,7 @@ class HSBC_MTPV_Ajax {
 		check_ajax_referer( 'hsbc-mtpv', 'nonce' );
 
 		if ( ! current_user_can( 'edit_pages' ) ) {
-			wp_send_json_error( [ 'message' => 'Insufficient permissions.' ], 403 );
+			wp_send_json_error( array( 'message' => 'Insufficient permissions.' ), 403 );
 		}
 	}
 
@@ -85,27 +85,29 @@ class HSBC_MTPV_Ajax {
 		$this->verify();
 
 		$parent_id  = isset( $_POST['parent_id'] ) ? absint( $_POST['parent_id'] ) : 0;
-		$post_types = get_option( 'hsbc_mtpv_post_types', [ 'page' ] );
+		$post_types = get_option( 'hsbc_mtpv_post_types', array( 'page' ) );
 
 		if ( ! $parent_id ) {
-			wp_send_json_error( [ 'message' => 'Invalid parent ID.' ], 400 );
+			wp_send_json_error( array( 'message' => 'Invalid parent ID.' ), 400 );
 		}
 
 		$parent_ids   = $this->get_parent_ids( $post_types );
 		$enable_trash = (bool) get_option( 'hsbc_mtpv_enable_trash', false );
 
-		$children = get_posts( [
-			'post_type'      => $post_types,
-			'post_parent'    => $parent_id,
-			'posts_per_page' => -1,
-			'orderby'        => 'menu_order',
-			'order'          => 'ASC',
-			'post_status'    => 'any',
-		] );
+		$children = get_posts(
+			array(
+				'post_type'      => $post_types,
+				'post_parent'    => $parent_id,
+				'posts_per_page' => -1,
+				'orderby'        => 'menu_order',
+				'order'          => 'ASC',
+				'post_status'    => 'any',
+			)
+		);
 
 		$data = array_map(
 			function ( $page ) use ( $parent_ids, $enable_trash ) {
-				return [
+				return array(
 					'id'           => $page->ID,
 					'title'        => $page->post_title ?: __( '(no title)', 'hsbc-menu-tree-page-view' ),
 					'edit_link'    => get_edit_post_link( $page->ID, 'raw' ),
@@ -116,7 +118,7 @@ class HSBC_MTPV_Ajax {
 					'has_children' => in_array( $page->ID, $parent_ids, true ),
 					'can_trash'    => $enable_trash && current_user_can( 'delete_post', $page->ID ),
 					'order'        => (int) $page->menu_order,
-				];
+				);
 			},
 			$children
 		);
@@ -157,19 +159,19 @@ class HSBC_MTPV_Ajax {
 		$ref_id    = isset( $_POST['ref_id'] ) ? absint( $_POST['ref_id'] ) : 0;
 		$direction = isset( $_POST['direction'] ) ? sanitize_key( $_POST['direction'] ) : '';
 
-		if ( ! $page_id || ! $ref_id || ! in_array( $direction, [ 'up', 'down' ], true ) ) {
-			wp_send_json_error( [ 'message' => 'Invalid parameters.' ], 400 );
+		if ( ! $page_id || ! $ref_id || ! in_array( $direction, array( 'up', 'down' ), true ) ) {
+			wp_send_json_error( array( 'message' => 'Invalid parameters.' ), 400 );
 		}
 
 		$page     = get_post( $page_id );
 		$ref_page = get_post( $ref_id );
 
 		if ( ! $page || ! $ref_page || $page->post_type !== $ref_page->post_type ) {
-			wp_send_json_error( [ 'message' => 'Invalid pages.' ], 400 );
+			wp_send_json_error( array( 'message' => 'Invalid pages.' ), 400 );
 		}
 
 		if ( 'trash' === $page->post_status ) {
-			wp_send_json_error( [ 'message' => 'Cannot move a trashed page.' ], 400 );
+			wp_send_json_error( array( 'message' => 'Cannot move a trashed page.' ), 400 );
 		}
 
 		global $wpdb;
@@ -190,11 +192,13 @@ class HSBC_MTPV_Ajax {
 					$ref_page->ID
 				)
 			);
-			wp_update_post( [
-				'ID'          => $page->ID,
-				'menu_order'  => $ref_page->menu_order,
-				'post_parent' => $ref_page->post_parent,
-			] );
+			wp_update_post(
+				array(
+					'ID'          => $page->ID,
+					'menu_order'  => $ref_page->menu_order,
+					'post_parent' => $ref_page->post_parent,
+				)
+			);
 		} else {
 			// Place $page after $ref_page
 			$wpdb->query(
@@ -211,11 +215,13 @@ class HSBC_MTPV_Ajax {
 					$ref_page->ID
 				)
 			);
-			wp_update_post( [
-				'ID'          => $page->ID,
-				'menu_order'  => $ref_page->menu_order + 1,
-				'post_parent' => $ref_page->post_parent,
-			] );
+			wp_update_post(
+				array(
+					'ID'          => $page->ID,
+					'menu_order'  => $ref_page->menu_order + 1,
+					'post_parent' => $ref_page->post_parent,
+				)
+			);
 		}
 
 		wp_send_json_success();
@@ -241,17 +247,17 @@ class HSBC_MTPV_Ajax {
 		$this->verify();
 
 		if ( ! get_option( 'hsbc_mtpv_enable_trash', false ) ) {
-			wp_send_json_error( [ 'message' => 'Trash action is disabled.' ], 403 );
+			wp_send_json_error( array( 'message' => 'Trash action is disabled.' ), 403 );
 		}
 
 		$page_id = isset( $_POST['page_id'] ) ? absint( $_POST['page_id'] ) : 0;
 
 		if ( ! $page_id ) {
-			wp_send_json_error( [ 'message' => 'Invalid page ID.' ], 400 );
+			wp_send_json_error( array( 'message' => 'Invalid page ID.' ), 400 );
 		}
 
 		if ( ! current_user_can( 'delete_post', $page_id ) ) {
-			wp_send_json_error( [ 'message' => 'Insufficient permissions.' ], 403 );
+			wp_send_json_error( array( 'message' => 'Insufficient permissions.' ), 403 );
 		}
 
 		$result = wp_trash_post( $page_id );
@@ -259,7 +265,7 @@ class HSBC_MTPV_Ajax {
 		if ( $result ) {
 			wp_send_json_success();
 		} else {
-			wp_send_json_error( [ 'message' => 'Failed to trash page.' ] );
+			wp_send_json_error( array( 'message' => 'Failed to trash page.' ) );
 		}
 	}
 
@@ -302,17 +308,17 @@ class HSBC_MTPV_Ajax {
 		$status    = isset( $_POST['status'] ) ? sanitize_key( $_POST['status'] ) : 'draft';
 		$post_type = isset( $_POST['post_type'] ) ? sanitize_key( $_POST['post_type'] ) : 'page';
 
-		if ( ! $ref_id || ! in_array( $type, [ 'after', 'inside' ], true ) || '' === $title ) {
-			wp_send_json_error( [ 'message' => 'Invalid parameters.' ], 400 );
+		if ( ! $ref_id || ! in_array( $type, array( 'after', 'inside' ), true ) || '' === $title ) {
+			wp_send_json_error( array( 'message' => 'Invalid parameters.' ), 400 );
 		}
 
-		if ( ! in_array( $status, [ 'draft', 'pending', 'publish', 'private' ], true ) ) {
+		if ( ! in_array( $status, array( 'draft', 'pending', 'publish', 'private' ), true ) ) {
 			$status = 'draft';
 		}
 
 		$ref_post = get_post( $ref_id );
 		if ( ! $ref_post ) {
-			wp_send_json_error( [ 'message' => 'Reference page not found.' ], 404 );
+			wp_send_json_error( array( 'message' => 'Reference page not found.' ), 404 );
 		}
 
 		global $wpdb;
@@ -331,13 +337,15 @@ class HSBC_MTPV_Ajax {
 				)
 			);
 
-			$new_id = wp_insert_post( [
-				'post_title'  => $title,
-				'post_status' => $status,
-				'post_type'   => $post_type,
-				'post_parent' => $ref_post->post_parent,
-				'menu_order'  => $ref_post->menu_order,
-			] );
+			$new_id = wp_insert_post(
+				array(
+					'post_title'  => $title,
+					'post_status' => $status,
+					'post_type'   => $post_type,
+					'post_parent' => $ref_post->post_parent,
+					'menu_order'  => $ref_post->menu_order,
+				)
+			);
 		} else {
 			// Insert as the first child inside the reference page.
 			$wpdb->query(
@@ -350,23 +358,27 @@ class HSBC_MTPV_Ajax {
 				)
 			);
 
-			$new_id = wp_insert_post( [
-				'post_title'  => $title,
-				'post_status' => $status,
-				'post_type'   => $post_type,
-				'post_parent' => $ref_post->ID,
-				'menu_order'  => 0,
-			] );
+			$new_id = wp_insert_post(
+				array(
+					'post_title'  => $title,
+					'post_status' => $status,
+					'post_type'   => $post_type,
+					'post_parent' => $ref_post->ID,
+					'menu_order'  => 0,
+				)
+			);
 		}
 
 		if ( is_wp_error( $new_id ) || ! $new_id ) {
-			wp_send_json_error( [ 'message' => 'Failed to create page.' ] );
+			wp_send_json_error( array( 'message' => 'Failed to create page.' ) );
 		}
 
-		wp_send_json_success( [
-			'id'        => $new_id,
-			'edit_link' => get_edit_post_link( $new_id, 'raw' ),
-		] );
+		wp_send_json_success(
+			array(
+				'id'        => $new_id,
+				'edit_link' => get_edit_post_link( $new_id, 'raw' ),
+			)
+		);
 	}
 
 	// -------------------------------------------------------------------------
@@ -387,7 +399,7 @@ class HSBC_MTPV_Ajax {
 		global $wpdb;
 
 		if ( empty( $post_types ) ) {
-			return [];
+			return array();
 		}
 
 		$placeholders = implode( ',', array_fill( 0, count( $post_types ), '%s' ) );

@@ -1,0 +1,36 @@
+name: WordPress Plugin CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+
+  test:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php: [8.1, 8.2, 8.3]
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          tools: composer
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress
+
+      - name: Run PHPCS
+        run: vendor/bin/phpcs
+
+      - name: Run PHPUnit
+        run: vendor/bin/phpunit

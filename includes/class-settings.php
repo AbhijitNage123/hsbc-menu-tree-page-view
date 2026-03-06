@@ -37,11 +37,11 @@ class HSBC_MTPV_Settings {
 	 * Wire up WordPress hooks for the settings page and plugin links.
 	 */
 	public function __construct() {
-		add_action( 'admin_menu', [ $this, 'add_settings_page' ] );
-		add_action( 'admin_init', [ $this, 'register_settings' ] );
+		add_action( 'admin_menu', array( $this, 'add_settings_page' ) );
+		add_action( 'admin_init', array( $this, 'register_settings' ) );
 		add_filter(
 			'plugin_action_links_' . plugin_basename( HSBC_MTPV_PATH . 'hsbc-menu-tree-page-view.php' ),
-			[ $this, 'add_settings_link' ]
+			array( $this, 'add_settings_link' )
 		);
 	}
 
@@ -56,7 +56,7 @@ class HSBC_MTPV_Settings {
 			__( 'HSBC Menu Tree', 'hsbc-menu-tree-page-view' ),
 			'manage_options',
 			'hsbc-mtpv',
-			[ $this, 'render_page' ]
+			array( $this, 'render_page' )
 		);
 	}
 
@@ -67,22 +67,34 @@ class HSBC_MTPV_Settings {
 	 * always in the expected format regardless of how the form is submitted.
 	 */
 	public function register_settings() {
-		register_setting( 'hsbc_mtpv_settings', 'hsbc_mtpv_post_types', [
-			'type'              => 'array',
-			'default'           => [ 'page' ],
-			'sanitize_callback' => [ $this, 'sanitize_post_types' ],
-		] );
+		register_setting(
+			'hsbc_mtpv_settings',
+			'hsbc_mtpv_post_types',
+			array(
+				'type'              => 'array',
+				'default'           => array( 'page' ),
+				'sanitize_callback' => array( $this, 'sanitize_post_types' ),
+			)
+		);
 
-		register_setting( 'hsbc_mtpv_settings', 'hsbc_mtpv_enable_trash', [
-			'type'    => 'boolean',
-			'default' => false,
-		] );
+		register_setting(
+			'hsbc_mtpv_settings',
+			'hsbc_mtpv_enable_trash',
+			array(
+				'type'    => 'boolean',
+				'default' => false,
+			)
+		);
 
-		register_setting( 'hsbc_mtpv_settings', 'hsbc_mtpv_roles', [
-			'type'              => 'array',
-			'default'           => [],
-			'sanitize_callback' => [ $this, 'sanitize_roles' ],
-		] );
+		register_setting(
+			'hsbc_mtpv_settings',
+			'hsbc_mtpv_roles',
+			array(
+				'type'              => 'array',
+				'default'           => array(),
+				'sanitize_callback' => array( $this, 'sanitize_roles' ),
+			)
+		);
 	}
 
 	/**
@@ -96,7 +108,7 @@ class HSBC_MTPV_Settings {
 	 */
 	public function sanitize_post_types( $value ) {
 		if ( ! is_array( $value ) ) {
-			return [ 'page' ];
+			return array( 'page' );
 		}
 		return array_map( 'sanitize_key', $value );
 	}
@@ -112,7 +124,7 @@ class HSBC_MTPV_Settings {
 	 */
 	public function sanitize_roles( $value ) {
 		if ( ! is_array( $value ) ) {
-			return [];
+			return array();
 		}
 		return array_map( 'sanitize_key', $value );
 	}
@@ -140,10 +152,10 @@ class HSBC_MTPV_Settings {
 	 * built-in roles that have page-management capabilities by default.
 	 */
 	public function render_page() {
-		$all_post_types = get_post_types( [ 'public' => true ], 'objects' );
-		$saved_types    = get_option( 'hsbc_mtpv_post_types', [ 'page' ] );
+		$all_post_types = get_post_types( array( 'public' => true ), 'objects' );
+		$saved_types    = get_option( 'hsbc_mtpv_post_types', array( 'page' ) );
 		$enable_trash   = get_option( 'hsbc_mtpv_enable_trash', false );
-		$saved_roles    = get_option( 'hsbc_mtpv_roles', [] );
+		$saved_roles    = get_option( 'hsbc_mtpv_roles', array() );
 		$all_roles      = wp_roles()->roles;
 
 		// Only show post types that support a parent selector ("Choose a parent page").
@@ -190,10 +202,12 @@ class HSBC_MTPV_Settings {
 						<th scope="row"><?php esc_html_e( 'Restrict Visibility to Roles', 'hsbc-menu-tree-page-view' ); ?></th>
 						<td>
 							<?php
-							$allowed_roles = [ 'admin-hsbcistrator', 'editor' ];
+							$allowed_roles = array( 'admin-hsbcistrator', 'editor' );
 							foreach ( $all_roles as $slug => $role ) :
-								if ( ! in_array( $slug, $allowed_roles, true ) ) continue;
-							?>
+								if ( ! in_array( $slug, $allowed_roles, true ) ) {
+									continue;
+								}
+								?>
 								<label style="display:block;margin-bottom:5px">
 									<input type="checkbox"
 										name="hsbc_mtpv_roles[]"

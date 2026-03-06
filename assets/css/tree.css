@@ -1,6 +1,6 @@
 /* =============================================================================
-   HSBC Menu Tree Page View – HSBC sidebar styles
-   ============================================================================= */
+	HSBC Menu Tree Page View – HSBC sidebar styles
+	============================================================================= */
 
 /* Wrapper ------------------------------------------------------------------- */
 
@@ -26,11 +26,11 @@
 	color: #f0f0f1;
 	outline: none;
 	width: 145px;
-    font-size: 10px;
-    line-height: 1em;
-    padding: 2px;
-    background: #f9f9f9;
-    border-radius: 2px;
+	font-size: 10px;
+	line-height: 1em;
+	padding: 2px;
+	background: #f9f9f9;
+	border-radius: 2px;
 }
 
 .hsbc-mtpv-search:focus {
@@ -375,12 +375,12 @@
 
 .hsbc-mtpv-add-status {
 	width: 100% !important;
-    padding: 0 8px !important;
-    font-size: 10px !important;
-    border-radius: 3px !important;
-    color: #646970 !important;
-    border: 1px solid #8c8f94 !important;
-    box-sizing: border-box;
+	padding: 0 8px !important;
+	font-size: 10px !important;
+	border-radius: 3px !important;
+	color: #646970 !important;
+	border: 1px solid #8c8f94 !important;
+	box-sizing: border-box;
 	background-size: 13px 13px !important;
 }
 
@@ -432,33 +432,33 @@
 	border-radius: 2px;
 }
 
-#adminmenu .hsbc-mtpv-wrap a.hsbc-mtpv-title:focus, 
-#adminmenu .hsbc-mtpv-wrap a.hsbc-mtpv-title:hover, 
+#adminmenu .hsbc-mtpv-wrap a.hsbc-mtpv-title:focus,
+#adminmenu .hsbc-mtpv-wrap a.hsbc-mtpv-title:hover,
 .folded #adminmenu .wp-submenu-head:hover {
 	box-shadow: unset;
 }
 
 #adminmenu a.hsbc-mtpv-action:hover, #adminmenu a.hsbc-mtpv-popup-btn {
-    box-shadow: unset;
+	box-shadow: unset;
 }
 
 .hsbc-mtpv-row.hsbc-mtpv-row--hover {
-    box-shadow: inset 3px 0 0 0 #72aee6;
+	box-shadow: inset 3px 0 0 0 #72aee6;
 }
 
 .hsbc-mtpv-search-wrap-title {
 	display: flex;
-    align-items: center;
-    gap: 4px;
-    padding: 0px 8px;
-    color: #fff;
+	align-items: center;
+	gap: 4px;
+	padding: 0px 8px;
+	color: #fff;
 	font-size: 10px;
 }
 
 .hsbc-mtpv-popup-page-id {
-    font-size: 10px;
+	font-size: 10px;
 }
 
 a[href="edit.php?post_type=page&page=hsbc-mtpv-panel-page"] {
-    display: none !important;
+	display: none !important;
 }

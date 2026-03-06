@@ -50,8 +50,11 @@ require_once HSBC_MTPV_PATH . 'includes/class-ajax.php';
  * function and hook is available before our constructors register their
  * own actions/filters.
  */
-add_action( 'plugins_loaded', function () {
-	new HSBC_MTPV_Settings();
-	new HSBC_Menu();
-	new HSBC_MTPV_Ajax();
-} );
+add_action(
+	'plugins_loaded',
+	function () {
+		new HSBC_MTPV_Settings();
+		new HSBC_Menu();
+		new HSBC_MTPV_Ajax();
+	}
+);
