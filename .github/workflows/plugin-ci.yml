@@ -31,6 +31,9 @@ jobs:
 
       - name: Run PHPCS
         run: vendor/bin/phpcs
+      
+      - name: Run PHPCBF
+        run: vendor/bin/phpcbf --standard=WordPress --extensions=php --ignore=vendor/ .
 
       - name: Run PHPUnit
         run: vendor/bin/phpunit
