@@ -13,10 +13,11 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.4
+          php-version: '8.4'
+          extensions: mbstring, intl
 
       - name: Install dependencies
-        run: composer install
+        run: composer install --prefer-dist --no-suggest --no-progress
 
       - name: Run PHPUnit
         run: vendor/bin/phpunit
