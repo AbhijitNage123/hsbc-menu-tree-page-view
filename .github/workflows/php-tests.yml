@@ -1,0 +1,17 @@
+name: PHP Tests
+
+on: [push]
+
+jobs:
+  phpunit:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: composer install
+
+      - name: Run PHPUnit
+        run: vendor/bin/phpunit
