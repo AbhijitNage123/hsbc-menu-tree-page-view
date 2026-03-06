@@ -1,0 +1,464 @@
+/* =============================================================================
+   HSBC Menu Tree Page View – HSBC sidebar styles
+   ============================================================================= */
+
+/* Wrapper ------------------------------------------------------------------- */
+
+.hsbc-mtpv-wrap {
+	padding: 4px 0 10px;
+	font-size: 12px;
+	line-height: 1.4;
+}
+
+/* Search -------------------------------------------------------------------- */
+
+.hsbc-mtpv-search-wrap {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	padding: 6px 8px 6px 6px;
+}
+
+.hsbc-mtpv-search {
+	flex: 1;
+	min-width: 0;
+	border: 1px solid rgba(255,255,255,0.15);
+	color: #f0f0f1;
+	outline: none;
+	width: 145px;
+    font-size: 10px;
+    line-height: 1em;
+    padding: 2px;
+    background: #f9f9f9;
+    border-radius: 2px;
+}
+
+.hsbc-mtpv-search:focus {
+	border-color: #72aee6;
+}
+
+.hsbc-mtpv-search-clear {
+	background: none;
+	border: none;
+	color: #aaa;
+	cursor: pointer;
+	font-size: 11px;
+	padding: 2px 4px;
+	line-height: 1;
+	flex-shrink: 0;
+}
+
+.hsbc-mtpv-search-clear:hover {
+	color: #f0f0f1;
+}
+
+.hsbc-mtpv-no-results,
+.hsbc-mtpv-empty {
+	padding: 4px 10px;
+	color: #aaa;
+	font-size: 11px;
+	margin: 0;
+	font-style: italic;
+}
+
+/* Tree list ----------------------------------------------------------------- */
+
+.hsbc-mtpv-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+/*
+ * Expand / collapse – CSS transition via max-height.
+ * JavaScript appends .hsbc-mtpv-children--collapsed to start at 0,
+ * then removes the class in the next two animation frames so the
+ * browser can transition smoothly from 0 → open.
+ */
+.hsbc-mtpv-children {
+	padding-left: 14px;
+	overflow:     hidden;
+	max-height:   3000px;
+	transition:   max-height 0.25s ease;
+}
+
+.hsbc-mtpv-children--collapsed {
+	max-height: 0;
+}
+
+/* Item row ------------------------------------------------------------------ */
+
+.hsbc-mtpv-row {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	padding: 3px 8px 3px 2px;
+	position: relative;
+	border-top: 2px solid transparent;
+	transition: border-color 0.1s;
+}
+
+.hsbc-mtpv-row--hover {
+	background: rgba(255,255,255,0.07);
+}
+
+/* Current page being edited */
+.hsbc-mtpv-current > .hsbc-mtpv-row {
+	background: rgba(114,174,230,0.15);
+}
+
+/* SortableJS drag-and-drop visual cues ------------------------------------ */
+
+/* The item being dragged (original, in-place clone) */
+.hsbc-mtpv-sortable-chosen {
+	opacity: 0.5;
+}
+
+/* The floating clone following the cursor */
+.hsbc-mtpv-sortable-drag {
+	opacity: 0.9;
+	background: #2c3338;
+	border-radius: 3px;
+	box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+/* The drop placeholder showing where the item will land */
+.hsbc-mtpv-sortable-ghost {
+	opacity: 0;
+	border-top: 2px solid #72aee6;
+}
+
+/* Drag handle – drag.svg via CSS mask so color is fully controllable -------- */
+
+.hsbc-mtpv-drag-handle {
+	display:    inline-block;
+	width:      15px;
+	height:     15px;
+	flex-shrink: 0;
+	cursor:     grab;
+	user-select: none;
+	opacity:    0;
+	transition: opacity 0.15s;
+
+	/* mask-image lets us tint the SVG with background-color */
+	background-color:        #6c7781;
+	-webkit-mask-image:      url('../images/drag.svg');
+	mask-image:              url('../images/drag.svg');
+	-webkit-mask-size:       contain;
+	mask-size:               contain;
+	-webkit-mask-repeat:     no-repeat;
+	mask-repeat:             no-repeat;
+	-webkit-mask-position:   center;
+	mask-position:           center;
+}
+
+.hsbc-mtpv-row--hover .hsbc-mtpv-drag-handle {
+	background-color: #aaa;
+	opacity: 1;
+}
+
+.hsbc-mtpv-drag-handle:active {
+	cursor: grabbing;
+}
+
+/* Toggle button – page-small-plus / page-small-minus PNGs ------------------ */
+
+.hsbc-mtpv-toggle {
+	appearance: none;
+	background-color:    transparent;
+	background-image:    url('../images/page-small-plus.png');
+	background-size:     contain;
+	background-repeat:   no-repeat;
+	background-position: center;
+	border:    none;
+	padding:   0;
+	flex-shrink: 0;
+	width:     13px;
+	height:    13px;
+	cursor:    pointer;
+	/* Make the dark PNG icons visible on the dark sidebar */
+	/* filter: invert(1) brightness(0.75); */
+	/* transition: filter 0.15s; */
+}
+
+/* Swap to the minus icon when the parent item is expanded */
+.hsbc-mtpv-expanded > .hsbc-mtpv-row .hsbc-mtpv-toggle {
+	background-image: url('../images/page-small-minus.png');
+}
+
+.hsbc-mtpv-toggle:hover {
+	/* filter: invert(1) brightness(1); */
+}
+
+/* Loading state – spin the icon in place */
+.hsbc-mtpv-toggle--loading {
+	animation: hsbc-mtpv-spin 0.7s linear infinite;
+}
+
+@keyframes hsbc-mtpv-spin {
+	to { transform: rotate(360deg); }
+}
+
+/* Leaf-node spacer – page-small.png as a plain page icon ------------------- */
+
+.hsbc-mtpv-toggle-spacer {
+	display:             inline-block;
+	width:               13px;
+	height:              13px;
+	flex-shrink:         0;
+	background-image:    url('../images/page-small.png');
+	background-size:     contain;
+	background-repeat:   no-repeat;
+	background-position: center;
+	/* filter: invert(1) brightness(0.75); */
+}
+
+/* Title link ---------------------------------------------------------------- */
+
+.hsbc-mtpv-title {
+	flex: 1;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-size: 11px !important;
+	color: #f0f0f1 !important;
+	text-decoration: none !important;
+}
+
+.hsbc-mtpv-title:hover {
+	color: #72aee6 !important;
+}
+
+/* Status badge -------------------------------------------------------------- */
+
+.hsbc-mtpv-status {
+	font-size: 9px;
+	padding: 1px 4px;
+	border-radius: 2px;
+	flex-shrink: 0;
+	text-transform: uppercase;
+	letter-spacing: 0.4px;
+	font-weight: 600;
+}
+
+.hsbc-mtpv-status--draft   { background: #3a3a3a; color: #aaa; }
+.hsbc-mtpv-status--pending { background: #574e00; color: #ffd700; }
+.hsbc-mtpv-status--private { background: #1a2d4e; color: #7eb3f5; }
+.hsbc-mtpv-status--future  { background: #1e3a1e; color: #7ed87e; }
+
+/* Password-protected indicator – lock.svg ---------------------------------- */
+
+.hsbc-mtpv-protected {
+	display:             inline-block;
+	width:               12px;
+	height:              12px;
+	flex-shrink:         0;
+	background-image:    url('../images/lock.svg');
+	background-size:     contain;
+	background-repeat:   no-repeat;
+	background-position: center;
+	/* lock.svg fill is #232323 (dark); invert + brighten for dark sidebar */
+	/* filter: invert(1) brightness(0.7); */
+	opacity: 0.8;
+}
+
+/* Hover popup --------------------------------------------------------------- */
+
+.hsbc-mtpv-item {
+	position: relative;
+}
+
+.hsbc-mtpv-popup {
+	position:   absolute;
+	top:        0;
+	left:       165px;
+	z-index:    9999;
+	min-width:  160px;
+	background: #2c3338;
+	border:     1px solid rgba(255,255,255,0.12);
+	border-radius: 4px;
+	padding:    8px 10px;
+	box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+
+	/* Hidden by default – JS adds .hsbc-mtpv-popup--visible */
+	opacity:        0;
+	pointer-events: none;
+	transform:      translateY(-4px);
+	transition:     opacity 0.15s ease, transform 0.15s ease;
+}
+
+.hsbc-mtpv-popup--visible {
+	opacity:        1;
+	pointer-events: auto;
+	transform:      translateY(0);
+}
+
+/* Rows inside the popup */
+.hsbc-mtpv-popup-group {
+	display:     flex;
+	align-items: center;
+	gap:         6px;
+	padding:     3px 0;
+	border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.hsbc-mtpv-popup-group:last-child {
+	border-bottom: none;
+}
+
+.hsbc-mtpv-popup-label {
+	font-size:   10px;
+	color:       #6c7781;
+	white-space: nowrap;
+}
+
+.hsbc-mtpv-popup-sep {
+	color:     #555;
+	font-size: 10px;
+}
+
+/* Buttons inside the popup */
+.hsbc-mtpv-popup-btn {
+	appearance:      none;
+	background:      none;
+	border:          none;
+	padding:         0;
+	font-size:       10px !important;
+	color:           #aaa;
+	text-decoration: none;
+	cursor:          pointer;
+	line-height:     1.4;
+	white-space:     nowrap;
+	transition:      color 0.12s;
+}
+
+.hsbc-mtpv-popup-btn:hover {
+	color: #72aee6;
+}
+
+.hsbc-mtpv-popup-btn--danger:hover {
+	color: #d63638;
+}
+
+/* Add-page inline form ------------------------------------------------------ */
+
+.hsbc-mtpv-add-form {
+	margin-top: 6px;
+	display:    flex;
+	flex-direction: column;
+	gap:        5px;
+}
+
+.hsbc-mtpv-add-form-label {
+	font-size:   10px;
+	color:       #6c7781;
+	margin:      0;
+}
+
+.hsbc-mtpv-add-name {
+	width:       100%;
+	padding:     4px 6px;
+	font-size:   10px;
+	border:      1px solid rgba(255,255,255,0.15);
+	border-radius: 2px;
+	background:  rgba(0,0,0,0.3);
+	color:       #f0f0f1;
+	outline:     none;
+	box-sizing:  border-box;
+
+}
+
+.hsbc-mtpv-add-name:focus {
+	border-color: #72aee6;
+}
+
+.hsbc-mtpv-add-status {
+	width: 100% !important;
+    padding: 0 8px !important;
+    font-size: 10px !important;
+    border-radius: 3px !important;
+    color: #646970 !important;
+    border: 1px solid #8c8f94 !important;
+    box-sizing: border-box;
+	background-size: 13px 13px !important;
+}
+
+.hsbc-mtpv-add-form-btns {
+	display: flex;
+	gap:     6px;
+}
+
+.hsbc-mtpv-add-submit,
+.hsbc-mtpv-add-cancel {
+	appearance:    none;
+	border:        none;
+	border-radius: 3px;
+	font-size:     11px;
+	padding:       3px 10px;
+	cursor:        pointer;
+	transition:    background 0.12s;
+}
+
+.hsbc-mtpv-add-submit {
+	background: #2271b1;
+	color:      #fff;
+}
+
+.hsbc-mtpv-add-submit:hover:not(:disabled) {
+	background: #135e96;
+}
+
+.hsbc-mtpv-add-submit:disabled {
+	opacity: 0.6;
+	cursor:  not-allowed;
+}
+
+.hsbc-mtpv-add-cancel {
+	background: rgba(255,255,255,0.08);
+	color:      #aaa;
+}
+
+.hsbc-mtpv-add-cancel:hover {
+	background: rgba(255,255,255,0.14);
+	color:      #f0f0f1;
+}
+
+/* Search highlight ---------------------------------------------------------- */
+
+.hsbc-mtpv-highlight {
+	background: rgba(255, 214, 0, 0.28);
+	color: inherit;
+	border-radius: 2px;
+}
+
+#adminmenu .hsbc-mtpv-wrap a.hsbc-mtpv-title:focus, 
+#adminmenu .hsbc-mtpv-wrap a.hsbc-mtpv-title:hover, 
+.folded #adminmenu .wp-submenu-head:hover {
+	box-shadow: unset;
+}
+
+#adminmenu a.hsbc-mtpv-action:hover, #adminmenu a.hsbc-mtpv-popup-btn {
+    box-shadow: unset;
+}
+
+.hsbc-mtpv-row.hsbc-mtpv-row--hover {
+    box-shadow: inset 3px 0 0 0 #72aee6;
+}
+
+.hsbc-mtpv-search-wrap-title {
+	display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0px 8px;
+    color: #fff;
+	font-size: 10px;
+}
+
+.hsbc-mtpv-popup-page-id {
+    font-size: 10px;
+}
+
+a[href="edit.php?post_type=page&page=hsbc-mtpv-panel-page"] {
+    display: none !important;
+}
